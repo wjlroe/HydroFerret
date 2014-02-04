@@ -12,10 +12,10 @@ cabal-version:       >=1.8
 executable spacecatslol
   main-is:             Main.hs
   build-depends:       base
-                     , wai ==1.3.*
-                     , warp ==1.3.*
-                     , http-types ==0.7.*
-                     , scotty
+                     , wai
+                     , warp
+                     , http-types
+                     , scotty >=0.6.2
                      , text
                      , bytestring
                      , aeson
