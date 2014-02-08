@@ -28,3 +28,4 @@ executable spacecatslol
                      , transformers
                      , unordered-containers
                      , attoparsec
+                     , yaml ==0.8.6.2
