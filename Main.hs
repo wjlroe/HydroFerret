@@ -73,4 +73,4 @@ main = do
             cats <- liftIO $ catBomb spacecats num
             json $ CatBomb {cats = cats}
         notFound $ do
-            text "Page not fount"
+            text "Page not found"
