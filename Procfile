@@ -1,1 +1,1 @@
-web: ./dist/build/spacecatslol/spacecatslol
+web: spacecatslol
