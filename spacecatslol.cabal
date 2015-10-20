@@ -1,17 +1,23 @@
 name:                spacecatslol
-version:             0.0.1
+version:             0.0.2
 synopsis:            Space Cats! Ha ha! Lol!
-homepage:            https://github.com/wjlroe/spacecatslol
+description:         Random cats from space
+homepage:            https://github.com/wjlroe/HydroFerret
 license:             MIT
+license-file:        LICENSE
 author:              William Roe
 maintainer:          git@wjlr.org.uk
 category:            Web
 build-type:          Simple
 cabal-version:       >=1.8
 
+source-repository head
+  type: git
+  location: git://github.com/wjlroe/HydroFerret.git
+
 executable spacecatslol
   main-is:             Main.hs
-  build-depends:       base
+  build-depends:       base == 4.*
                      , wai
                      , warp
                      , http-types
@@ -22,10 +28,9 @@ executable spacecatslol
                      , blaze-html
                      , containers
                      , heroku
-                     , random-extras
                      , random-source
                      , random-fu
                      , transformers
                      , unordered-containers
                      , attoparsec
-                     , yaml ==0.8.6.2
+                     , yaml ==0.8.15.1

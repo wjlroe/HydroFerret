@@ -2,15 +2,15 @@
 import Web.Scotty (scotty, notFound, get, param, html, json, text)
 import System.Environment (getEnvironment)
 import Control.Monad (liftM)
-import Data.Random.Extras (choice, choices)
-import Data.Random.RVar (runRVar)
+import Data.Random (runRVar, randomElement, shuffleNofM)
 import Data.Random.Source.DevRandom
 import Data.Text.Lazy (Text)
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.HashMap.Strict as HM
 import Data.Aeson (object, toJSON)
 import Data.Aeson.Types (ToJSON, (.=))
-import Text.Blaze.Html5 (body, h1, p)
+import Text.Blaze.Html5 (body, h1, p, toHtml, (!), a)
+import Text.Blaze.Html5.Attributes (href)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Data.Yaml (decodeFile)
 
@@ -35,13 +35,16 @@ data CatBomb = CatBomb
 instance ToJSON CatBomb where
     toJSON (CatBomb cats) = object ["spacecats" .= cats]
 
+randomCat :: [Text] -> IO Text
 randomCat spacecats = do
-    x <- runRVar (choice spacecats) DevRandom
+    x <- runRVar (randomElement spacecats) DevRandom
     return $ x
 
+catBomb :: [Text] -> Int -> IO [Text]
 catBomb spacecats num = do
-    let num' = minimum [num, (length spacecats), 10]
-    xs <- runRVar (choices num' spacecats) DevRandom
+    let m = length spacecats
+    let num' = minimum [num, m, 10]
+    xs <- runRVar (shuffleNofM num' m spacecats) DevRandom
     return $ xs
 
 readCats = do
@@ -61,8 +64,8 @@ main = do
         get "/" $ do
             html . renderHtml $ do
                 body $ do
-                    h1 "SPACECATSLOLOLOLOLOLOL!"
-                    p "you like?"
+                    h1 "Random images for you"
+                    a ! href "/random" $ "/random for a random image"
         get "/random" $ do
             cat <- liftIO $ randomCat spacecats
             json $ RandomCat {cat = cat}
