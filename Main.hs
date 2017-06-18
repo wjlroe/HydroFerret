@@ -14,6 +14,30 @@ import Text.Blaze.Html5.Attributes (href)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Data.Yaml (decodeFile)
 
+data SlackAttachment = SlackAttachment
+    { title :: Text
+    , fields :: [Text]
+    , imageUrl :: Text
+    } deriving Show
+
+instance ToJSON SlackAttachment where
+    toJSON (SlackAttachment titleField fieldsField imageUrlField) = object
+        [ "title" .= titleField
+        , "fields" .= fieldsField
+        , "image_url" .= imageUrlField
+        ]
+
+data SlackMessage = SlackMessage
+    { messageText :: Text
+    , attachments :: [SlackAttachment]
+    } deriving Show
+
+instance ToJSON SlackMessage where
+    toJSON (SlackMessage textField attachmentsField) = object
+        [ "text" .= textField
+        , "attachments" .= attachmentsField
+        ]
+
 data SpacecatCount = SpacecatCount
     { count :: Int
     } deriving Show
@@ -34,6 +58,19 @@ data CatBomb = CatBomb
 
 instance ToJSON CatBomb where
     toJSON (CatBomb catList) = object ["spacecats" .= catList]
+
+newAttachment :: Text -> SlackAttachment
+newAttachment imageUrlI =
+    SlackAttachment { title = "Spacecat"
+                    , fields = []
+                    , imageUrl = imageUrlI
+                    }
+
+newSlackMessage :: Text -> SlackMessage
+newSlackMessage imageUrlI =
+    SlackMessage { messageText = "Spacecatlol"
+                , attachments = [newAttachment imageUrlI]
+                }
 
 randomCat :: [Text] -> IO Text
 randomCat spacecats = do
@@ -72,9 +109,9 @@ main = do
         matchAny "/random" $ do
             randcat <- liftIO $ randomCat spacecats
             json $ RandomCat {cat = randcat}
-        matchAny "/randomImage" $ do
+        matchAny "/slack/random" $ do
             randcat <- liftIO $ randomCat spacecats
-            text $ randcat
+            json $ newSlackMessage randcat
         get "/count" $ do
             json $ SpacecatCount {count = length spacecats}
         get "/bomb" $ do
