@@ -2,8 +2,8 @@
 import Web.Scotty (scotty, notFound, get, param, html, json, text)
 import System.Environment (getEnvironment)
 import Control.Monad (liftM)
-import Data.Random (runRVar, randomElement, shuffleNofM)
-import Data.Random.Source.DevRandom
+import Data.Random (sample, randomElement, shuffleNofM)
+import Data.Random.Source.IO()
 import Data.Text.Lazy (Text)
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.HashMap.Strict as HM
@@ -37,14 +37,14 @@ instance ToJSON CatBomb where
 
 randomCat :: [Text] -> IO Text
 randomCat spacecats = do
-    x <- runRVar (randomElement spacecats) DevRandom
+    x <- sample (randomElement spacecats)
     return $ x
 
 catBomb :: [Text] -> Int -> IO [Text]
 catBomb spacecats num = do
     let m = length spacecats
     let num' = minimum [num, m, 10]
-    xs <- runRVar (shuffleNofM num' m spacecats) DevRandom
+    xs <- sample (shuffleNofM num' m spacecats)
     return $ xs
 
 readCats = do
