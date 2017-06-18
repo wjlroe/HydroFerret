@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-import Web.Scotty (scotty, notFound, get, param, html, json, text)
+import Web.Scotty (scotty, notFound, get, matchAny, param, html, json, text)
 import System.Environment (getEnvironment)
 import Control.Monad (liftM)
 import Data.Random (sample, randomElement, shuffleNofM)
@@ -69,7 +69,7 @@ main = do
                 body $ do
                     h1 "Random images for you"
                     a ! href "/random" $ "/random for a random image"
-        get "/random" $ do
+        matchAny "/random" $ do
             randcat <- liftIO $ randomCat spacecats
             json $ RandomCat {cat = randcat}
         get "/count" $ do
