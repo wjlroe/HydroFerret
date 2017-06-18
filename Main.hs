@@ -30,15 +30,12 @@ instance ToJSON SlackAttachment where
         ]
 
 data SlackMessage = SlackMessage
-    { messageText :: Text
-    , attachments :: [SlackAttachment]
+    { attachments :: [SlackAttachment]
     } deriving Show
 
 instance ToJSON SlackMessage where
-    toJSON (SlackMessage textField attachmentsField) = object
-        [ "text" .= textField
-        , "attachments" .= attachmentsField
-        ]
+    toJSON (SlackMessage attachmentsField) = object
+        [ "attachments" .= attachmentsField ]
 
 data SpacecatCount = SpacecatCount
     { count :: Int
@@ -71,9 +68,7 @@ newAttachment imageUrlI =
 
 newSlackMessage :: Text -> SlackMessage
 newSlackMessage imageUrlI =
-    SlackMessage { messageText = "Spacecatlol"
-                , attachments = [newAttachment imageUrlI]
-                }
+    SlackMessage { attachments = [newAttachment imageUrlI] }
 
 randomCat :: [Text] -> IO Text
 randomCat spacecats = do
