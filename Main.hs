@@ -17,13 +17,15 @@ import Data.Yaml (decodeFile)
 data SlackAttachment = SlackAttachment
     { title :: Text
     , fields :: [Text]
+    , fallback :: Text
     , imageUrl :: Text
     } deriving Show
 
 instance ToJSON SlackAttachment where
-    toJSON (SlackAttachment titleField fieldsField imageUrlField) = object
+    toJSON (SlackAttachment titleField fieldsField fallbackField imageUrlField) = object
         [ "title" .= titleField
         , "fields" .= fieldsField
+        , "fallback" .= fallbackField
         , "image_url" .= imageUrlField
         ]
 
@@ -62,6 +64,7 @@ instance ToJSON CatBomb where
 newAttachment :: Text -> SlackAttachment
 newAttachment imageUrlI =
     SlackAttachment { title = "Spacecat"
+                    , fallback = "A spacecat"
                     , fields = []
                     , imageUrl = imageUrlI
                     }
