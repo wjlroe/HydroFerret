@@ -32,4 +32,4 @@ executable spacecatslol
                      , transformers
                      , unordered-containers
                      , attoparsec
-                     , yaml ==0.8.15.1
+                     , yaml ==0.8.23
