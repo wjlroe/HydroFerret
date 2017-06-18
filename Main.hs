@@ -72,6 +72,9 @@ main = do
         matchAny "/random" $ do
             randcat <- liftIO $ randomCat spacecats
             json $ RandomCat {cat = randcat}
+        matchAny "/randomImage" $ do
+            randcat <- liftIO $ randomCat spacecats
+            text $ randcat
         get "/count" $ do
             json $ SpacecatCount {count = length spacecats}
         get "/bomb" $ do
