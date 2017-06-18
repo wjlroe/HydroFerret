@@ -27,10 +27,9 @@ executable spacecatslol
                      , aeson
                      , blaze-html
                      , containers
-                     , heroku
                      , random-source
                      , random-fu
                      , transformers
                      , unordered-containers
                      , attoparsec
-                     , yaml ==0.8.15.1
+                     , yaml ==0.8.23

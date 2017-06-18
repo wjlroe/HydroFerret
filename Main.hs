@@ -2,14 +2,14 @@
 import Web.Scotty (scotty, notFound, get, param, html, json, text)
 import System.Environment (getEnvironment)
 import Control.Monad (liftM)
-import Data.Random (runRVar, randomElement, shuffleNofM)
-import Data.Random.Source.DevRandom
+import Data.Random (sample, randomElement, shuffleNofM)
+import Data.Random.Source.IO()
 import Data.Text.Lazy (Text)
 import Control.Monad.IO.Class (liftIO)
 import qualified Data.HashMap.Strict as HM
 import Data.Aeson (object, toJSON)
 import Data.Aeson.Types (ToJSON, (.=))
-import Text.Blaze.Html5 (body, h1, p, toHtml, (!), a)
+import Text.Blaze.Html5 (body, h1, (!), a)
 import Text.Blaze.Html5.Attributes (href)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Data.Yaml (decodeFile)
@@ -19,47 +19,50 @@ data SpacecatCount = SpacecatCount
     } deriving Show
 
 instance ToJSON SpacecatCount where
-    toJSON (SpacecatCount count) = object ["spacecat_count" .= count]
+    toJSON (SpacecatCount spaceCatCount) = object ["spacecat_count" .= spaceCatCount]
 
 data RandomCat = RandomCat
     { cat :: Text
     } deriving Show
 
 instance ToJSON RandomCat where
-    toJSON (RandomCat cat) = object ["spacecat" .= cat]
+    toJSON (RandomCat catUrl) = object ["spacecat" .= catUrl]
 
 data CatBomb = CatBomb
     { cats :: [Text]
     } deriving Show
 
 instance ToJSON CatBomb where
-    toJSON (CatBomb cats) = object ["spacecats" .= cats]
+    toJSON (CatBomb catList) = object ["spacecats" .= catList]
 
 randomCat :: [Text] -> IO Text
 randomCat spacecats = do
-    x <- runRVar (randomElement spacecats) DevRandom
+    x <- sample (randomElement spacecats)
     return $ x
 
 catBomb :: [Text] -> Int -> IO [Text]
 catBomb spacecats num = do
     let m = length spacecats
     let num' = minimum [num, m, 10]
-    xs <- runRVar (shuffleNofM num' m spacecats) DevRandom
+    xs <- sample (shuffleNofM num' m spacecats)
     return $ xs
 
+readCats :: IO [Text]
 readCats = do
     catInfo <- decodeFile "cats.yaml"
     return $ case catInfo of
                 Nothing -> []
-                Just cats -> cats
+                Just catList -> catList
 
-port = do
+portConfig :: IO String
+portConfig = do
     env <- getEnvironment
     return $ HM.lookupDefault "3000" "PORT" (HM.fromList env)
 
+main :: IO ()
 main = do
     spacecats <- readCats
-    port <- liftM read $ port
+    port <- liftM read $ portConfig
     scotty port $ do
         get "/" $ do
             html . renderHtml $ do
@@ -67,13 +70,13 @@ main = do
                     h1 "Random images for you"
                     a ! href "/random" $ "/random for a random image"
         get "/random" $ do
-            cat <- liftIO $ randomCat spacecats
-            json $ RandomCat {cat = cat}
+            randcat <- liftIO $ randomCat spacecats
+            json $ RandomCat {cat = randcat}
         get "/count" $ do
             json $ SpacecatCount {count = length spacecats}
         get "/bomb" $ do
             num <- liftM read $ param "count"
-            cats <- liftIO $ catBomb spacecats num
-            json $ CatBomb {cats = cats}
+            catList <- liftIO $ catBomb spacecats num
+            json $ CatBomb {cats = catList}
         notFound $ do
             text "Page not found"
