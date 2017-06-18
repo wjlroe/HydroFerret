@@ -27,7 +27,6 @@ executable spacecatslol
                      , aeson
                      , blaze-html
                      , containers
-                     , heroku
                      , random-source
                      , random-fu
                      , transformers
