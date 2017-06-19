@@ -4,20 +4,20 @@ spacecats
 
 ## Dependencies and development
 
-You should use a recent Cabal release (at least 1.18) so you can use the [cabal
-sandbox](http://coldwa.st/e/blog/2013-08-20-Cabal-sandbox.html). It's possible
-to use cabal-dev of course, but the new cabal sandbox works with more tools
-(such as [hdevtool](https://github.com/bitc/hdevtools), which I recommend.
+Ensure you've got the [Haskell Tool Stack](https://docs.haskellstack.org/en/stable/README/) installed, you will need it to run
+the commands in this README.
 
-    cabal sandbox init
-    cabal install --only-dependencies
-    cabal configure
-    cabal build
+After installing Haskell Stack, ensure you run `stack setup` to download and
+install a `ghc` and so on.
 
-Then to run:
+To build this project run:
 
-    ./dist/build/spacecatslol/spacecatslol
+    stack build
+
+To run the web server:
+
+    stack exec spacecatslol
 
 Or, to specify a port to listen on:
 
-    PORT=8181 ./dist/build/spacecatslol/spacecatslol
+    PORT=8181 stack exec spacecatslol
